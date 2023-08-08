@@ -1,1 +1,3 @@
-module awesomeProject35
+module Assertion
+
+go 1.20

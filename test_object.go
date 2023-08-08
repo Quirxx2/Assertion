@@ -5,69 +5,36 @@ import (
 	"reflect"
 )
 
-var (
-	totalNil int
-	totalInt int
-	totalFlt int
-	totalStr int
-	totalMap int
-	totalSlc int
-	totalArr int
-	totalPtr int
-	totalBln int
-	totalRue int
-	totalOtr int
-)
-
-func doCheck(i interface{}) {
-	switch j := i.(type) {
-	case nil:
-		totalNil++
-	case int:
-		totalInt++
-	case float64:
-		totalFlt++
-	case string:
-		totalStr++
-	case uintptr:
-		totalPtr++
-	case bool:
-		totalBln++
-	default:
-		if reflect.TypeOf(j).Kind() == reflect.Slice {
-			totalSlc++
-			break
-		}
-		if reflect.TypeOf(j).Kind() == reflect.Array {
-			totalArr++
-			break
-		}
-		if reflect.TypeOf(j).Kind() == reflect.Map {
-			totalMap++
-			break
-		}
-		totalOtr++
-	}
-}
+var res = make(map[any]int)
 
 func assertobject(objects ...interface{}) {
+	fmt.Println(objects)
 	for _, obj := range objects {
-		doCheck(obj)
+		fmt.Println(obj)
+		if obj == nil {
+			res["nil"]++
+			continue
+		}
+		ref := reflect.TypeOf(obj).Kind()
+		switch ref {
+		case reflect.Array:
+			res["Array"]++
+		case reflect.Slice:
+			res["Slice"]++
+		case reflect.Map:
+			res["Map"]++
+		default:
+			res[ref]++
+		}
 	}
-	fmt.Println("Total nil values", totalNil)
-	fmt.Println("Total int values", totalInt)
-	fmt.Println("Total string values", totalStr)
-	fmt.Println("Total float64 values", totalFlt)
-	fmt.Println("Total map values", totalMap)
-	fmt.Println("Total slice values", totalSlc)
-	fmt.Println("Total array values", totalArr)
-	fmt.Println("Total pointer values", totalPtr)
-	fmt.Println("Total boolean values", totalBln)
-	fmt.Println("Total rune values", totalRue)
-	fmt.Println("Total other values", totalOtr)
 }
 
 func main() {
-	assertobject(uint(6), 5, "hi!", [3]int{3, 5, 8}, nil, 4.12, map[string]int{"j": 5, "k": 8})
-	//assertobject([3]int{3, 5, 8}, []bool{false, true})
+	var i int
+	var c chan bool
+	assertobject(uint(6), 5, "hi!", [3]int{3, 5, 8}, []int{1, 1}, []string{"bhb"},
+		nil, 4.12, map[string]int{"j": 5, "k": 8}, &i, c, false)
+	for k, v := range res {
+		fmt.Printf("Total amount of %v type is %d\n", k, v)
+	}
 }
